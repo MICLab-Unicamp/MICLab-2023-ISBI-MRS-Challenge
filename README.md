@@ -1,4 +1,4 @@
-# Edited_MRS_challenge_Deep_Spectral_Divers_Team
+# MICLab-2023-ISBI-MRS-Challenge
 
 This repository contains the code for the Deep Spectral Divers team's **first-place solution** to the **Edited-MRS Reconstruction Challenge** presented at the **IEEE International Symposium on Biomedical Imaging in 2023**. It enables inference using the models used in the challenge, aiming to reconstruct GABA spectra faster by utilizing less data compared to current Edited-MRS scans. For each track, we trained a separate model, resulting in four final models: Track 01, Track 02, and two instances of Track 03, one with 2048 data points and the other with 4096 data points.
 
