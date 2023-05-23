@@ -1,0 +1,13 @@
+network: "vit_base_patch32_224"
+
+model:
+  TimmSimpleCNN:
+    network: "vit_base_patch32_224"
+    image_size: !!python/tuple [224, 224]
+    nchannels: 3
+    transformers: True
+    pretrained: True
+    num_classes: 0
+    features_only: True
+
+name_model: "vit_base_patch32_224"
