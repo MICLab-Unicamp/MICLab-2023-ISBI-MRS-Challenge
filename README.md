@@ -169,7 +169,7 @@ If you use our model inference in your research please cite
 
       @misc{MICLab-2023-ISBI-MRS-Challenge,
         author = {Dias, G. and Oliveira, M. and Ueda, L. and Dertkigil, S. and Costa, P. and Rittner, L.},
-        title = {{Deep Spectral Divers first-place solution}},
+        title = {{IEEE-ISBI Edited-MRS Reconstruction Challenge first-place solution}},
         year = {2023},
         howpublished = {Code repository for the Deep Spectral Divers team's first-place solution to the Edited-MRS Reconstruction Challenge},
         url = {https://github.com/MICLab-Unicamp/MICLab-2023-ISBI-MRS-Challenge}
