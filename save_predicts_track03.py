@@ -1,18 +1,16 @@
 import argparse
 import os
 import torch
-from utils import ReadDatasets, pad_zeros_spectrogram, read_yaml
+from utils import ReadDatasets, pad_zeros_spectrogram
 from pre_processing import PreProcessingPipelineBaseline
 from tqdm import tqdm
 import numpy as np
-from models import TimmSimpleCNN, TimmSimpleCNNTrack3
+from models import SpectroViT, SpectroViTTrack3
 
 if __name__ == "__main__":
     # Create an argument parser object
     parser = argparse.ArgumentParser(description="predicted neural network MRS")
     # Add command-line arguments
-    parser.add_argument("config_file_down", type=str, help="config neural network yaml for the 2048 model")
-    parser.add_argument("config_file_up", type=str, help="config neural network yaml for the 4096 model")
     parser.add_argument("weights_down", type=str, help="WEIGHTs neural network for the 2048 model")
     parser.add_argument("weights_up", type=str, help="WEIGHTs neural network for the 4096 model")
     parser.add_argument("test_data_path", type=str, help="add test path dataset .h5")
@@ -31,19 +29,16 @@ if __name__ == "__main__":
         ReadDatasets.read_h5_sample_track_3(test_data_path)
 
     # Create dictionaries to store configurations, models, and load dictionaries
-    configs = {}
     models = {}
     load_dicts = {}
 
     # Configurations and models for the 2048 model
-    configs["down"] = read_yaml(args.config_file_down)
-    models["down"] = TimmSimpleCNN(**configs["down"]["model"]["TimmSimpleCNN"])
+    models["down"] = SpectroViT()
     load_dicts["down"] = torch.load(args.weights_down)
     models["down"].load_state_dict(load_dicts["down"]["model_state_dict"])
 
     # Configurations and models for the 4096 model
-    configs["up"] = read_yaml(args.config_file_up)
-    models["up"] = TimmSimpleCNNTrack3(**configs["up"]["model"]["TimmSimpleCNNTrack3"])
+    models["up"] = SpectroViTTrack3()
     load_dicts["up"] = torch.load(args.weights_up)
     models["up"].load_state_dict(load_dicts["up"]["model_state_dict"])
 

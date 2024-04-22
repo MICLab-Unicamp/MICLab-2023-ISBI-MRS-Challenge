@@ -10,24 +10,19 @@ def get_n_out_features(encoder, img_size, nchannels):
         n_out *= dim
     return n_out
 
-class TimmSimpleCNN(nn.Module):
-    def __init__(self, network: str,
-                 image_size: int,
-                 nchannels: int,
-                 transformers: bool = False,
-                 pretrained: bool = False,
-                 num_classes: int = 0,
-                 features_only: bool = True):
 
+class SpectroViT(nn.Module):
+    def __init__(self, timm_network: str = "vit_base_patch32_224",
+                 image_size: tuple[int, int] = (224, 224),
+                 nchannels: int = 3,
+                 pretrained: bool = True,
+                 num_classes: int = 0,
+                 ):
         super().__init__()
-        if transformers:
-            model_creator = {'model_name': network,
-                             "pretrained": pretrained,
-                             "num_classes": num_classes}
-        else:
-            model_creator = {'model_name': network,
-                             "pretrained": pretrained,
-                             "features_only": features_only}
+
+        model_creator = {'model_name': timm_network,
+                         "pretrained": pretrained,
+                         "num_classes": num_classes}
 
         self.encoder = timm.create_model(**model_creator)
 
@@ -38,46 +33,31 @@ class TimmSimpleCNN(nn.Module):
 
         n_out = get_n_out_features(self.encoder, image_size, nchannels)
 
-        if transformers:
-            self.dimensionality_up_sampling = nn.Sequential(
-                nn.Linear(n_out, 512), nn.ReLU(inplace=True),
-                nn.Linear(512, 1024), nn.ReLU(inplace=True),
-                nn.Linear(1024, 2048)
-            )
-        else:
-            self.dimensionality_up_sampling = nn.Sequential(
-                nn.Flatten(),
-                nn.Linear(n_out, 512), nn.ReLU(inplace=True),
-                nn.Linear(512, 1024), nn.ReLU(inplace=True),
-                nn.Linear(1024, 2048)
-            )
+        self.dimensionality_up_sampling = nn.Sequential(
+            nn.Linear(n_out, 512), nn.ReLU(inplace=True),
+            nn.Linear(512, 1024), nn.ReLU(inplace=True),
+            nn.Linear(1024, 2048)
+        )
 
     def forward(self, signal_input):
-        # output = self.encoder(signal_input)[-1]
         output = self.encoder(signal_input)
         output = self.dimensionality_up_sampling(output)
 
         return output
 
 
-class TimmSimpleCNNTrack3(nn.Module):
-    def __init__(self, network: str,
-                 image_size: int,
-                 nchannels: int,
-                 transformers: bool = False,
-                 pretrained: bool = False,
+class SpectroViTTrack3(nn.Module):
+    def __init__(self, timm_network: str = "vit_base_patch32_224",
+                 image_size: tuple[int, int] = (224, 224),
+                 nchannels: int = 3,
+                 pretrained: bool = True,
                  num_classes: int = 0,
-                 features_only: bool = True):
-
+                 ):
         super().__init__()
-        if transformers:
-            model_creator = {'model_name': network,
-                             "pretrained": pretrained,
-                             "num_classes": num_classes}
-        else:
-            model_creator = {'model_name': network,
-                             "pretrained": pretrained,
-                             "features_only": features_only}
+
+        model_creator = {'model_name': timm_network,
+                         "pretrained": pretrained,
+                         "num_classes": num_classes}
 
         self.encoder = timm.create_model(**model_creator)
 
@@ -88,26 +68,14 @@ class TimmSimpleCNNTrack3(nn.Module):
 
         n_out = get_n_out_features(self.encoder, image_size, nchannels)
 
-        if transformers:
-            self.dimensionality_up_sampling = nn.Sequential(
-                nn.Linear(n_out, 512), nn.ReLU(inplace=True),
-                nn.Linear(512, 1024), nn.ReLU(inplace=True),
-                nn.Linear(1024, 2048), nn.ReLU(inplace=True),
-                nn.Linear(2048, 4096)
-            )
-        else:
-            self.dimensionality_up_sampling = nn.Sequential(
-                nn.Flatten(),
-                nn.Linear(n_out, 512), nn.ReLU(inplace=True),
-                nn.Linear(512, 1024), nn.ReLU(inplace=True),
-                nn.Linear(1024, 2048), nn.ReLU(inplace=True),
-                nn.Linear(2048, 4096)
-            )
+        self.dimensionality_up_sampling = nn.Sequential(
+            nn.Linear(n_out, 512), nn.ReLU(inplace=True),
+            nn.Linear(512, 1024), nn.ReLU(inplace=True),
+            nn.Linear(1024, 2048), nn.ReLU(inplace=True),
+            nn.Linear(2048, 4096)
+        )
 
     def forward(self, signal_input):
-        # output = self.encoder(signal_input)[-1]
         output = self.encoder(signal_input)
         output = self.dimensionality_up_sampling(output)
-
         return output
-

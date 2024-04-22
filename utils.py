@@ -1,23 +1,6 @@
-import yaml
 import numpy as np
 import h5py
 from scipy import signal
-
-
-def read_yaml(file: str) -> yaml.loader.FullLoader:
-    """
-    Read YAML configuration file and load the configurations.
-
-    Args:
-        file (str): Path to the YAML file.
-
-    Returns:
-        yaml.loader.FullLoader: Loaded configurations from the YAML file.
-    """
-    with open(file, "r") as yaml_file:
-        configurations = yaml.load(yaml_file, Loader=yaml.FullLoader)
-
-    return configurations
 
 
 class ReadDatasets:

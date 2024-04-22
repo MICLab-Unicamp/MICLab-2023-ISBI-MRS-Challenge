@@ -3,14 +3,13 @@ import os
 import torch
 import numpy as np
 from tqdm import tqdm
-from utils import read_yaml, pad_zeros_spectrogram, ReadDatasets
+from utils import pad_zeros_spectrogram, ReadDatasets
 from pre_processing import PreProcessingPipelineBaseline
-from models import TimmSimpleCNN
+from models import SpectroViT
 
 if __name__ == "__main__":
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description="predicted neural network MRS")
-    parser.add_argument("config_file", type=str, help="config neural network yaml")
     parser.add_argument("weights", type=str, help="WEIGHTs neural network")
     parser.add_argument("test_data_path", type=str, help="add test path dataset .h5")
     parser.add_argument("save_folder_path", type=str, help="add folder path which the predict .h5 file will be saved")
@@ -19,12 +18,8 @@ if __name__ == "__main__":
     # Check if CUDA is available and set the device accordingly
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # Read the configuration file
-    configs = read_yaml(args.config_file)
-
-    # Create the model and move it to the device
-    model = TimmSimpleCNN(**configs["model"]["TimmSimpleCNN"])
-    model = model.to(device)
+    # Initialize the model
+    model = SpectroViT().to(device)
 
     # Load the weights into the model
     load_dict = torch.load(args.weights)
