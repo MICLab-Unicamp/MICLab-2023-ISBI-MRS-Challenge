@@ -12,7 +12,7 @@ Participants in the challenge were provided with simulated and in vivo data trai
 
 The results of the challenge were presented at the IEEE International Symposium on Biomedical Imaging (ISBI) conference held in Cartagena, Colombia on April 18th, 2023. The challenge outcomes were summarized and submitted for a joint publication.
 
-For more details about the challenge, you can visit the [challenge webpage](https://sites.google.com/view/edited-mrs-rec-challenge/home?authuser=0).
+To access our training framework, please visit the GitHub repository for our [Spectro-ViT model](https://github.com/MICLab-Unicamp/Spectro-ViT). For more information about the challenge, visit the [challenge webpage](https://sites.google.com/view/edited-mrs-rec-challenge/home?authuser=0) and check the [journal publication](https://link.springer.com/article/10.1007/s10334-024-01156-9) documenting the challenge results.
 
 
 ## Table of Contents
@@ -116,17 +116,15 @@ Instructions for **Tracks 01 and 02**:
 
 Execution:
 
-    python3 save_predicts_track01.py [config_file] [weights] [test_data_path] [save_folder_path]
+    python3 save_predicts_track01.py [weights] [test_data_path] [save_folder_path]
 
 or 
 
-    python3 save_predicts_track02.py [config_file] [weights] [test_data_path] [save_folder_path]
+    python3 save_predicts_track02.py [weights] [test_data_path] [save_folder_path]
 
 Example usage:
 
-    python3 save_predicts_track02.py configs/config_track02.yaml weights/weights_track02.pt data/challenge_data/track_02_test_data.h5 data/save_predicts
-
-Replace `[config_file]` with the path to the YAML configuration for the track.
+    python3 save_predicts_track02.py weights/weights_track02.pt data/challenge_data/track_02_test_data.h5 data/save_predicts
 
 Replace `[weights]` with the path to the weights file for the track.
 
@@ -138,17 +136,12 @@ Instructions for **Track 03**:
 
 Execution:
 
-    python3 save_predicts_track03.py [config_file_down] [config_file_up] [weights_down] [weights_up] [test_data_path] [save_folder_path]
+    python3 save_predicts_track03.py [weights_down] [weights_up] [test_data_path] [save_folder_path]
 
 Example usage:
 
-    python3 save_predicts_track03.py configs/config_track03_2048.yaml configs/config_track03_4096.yaml weights/weights_track03_2048.pt weights/weights_track03_4096.pt data/challenge_data/track_03_test_data.h5 data/save_predicts
+    python3 save_predicts_track03.py weights/weights_track03_2048.pt weights/weights_track03_4096.pt data/challenge_data/track_03_test_data.h5 data/save_predicts
 
-
-
-Replace `[config_file_down]` with the path to the YAML configuration for the track 03 downsampled (2048).
-
-Replace `[config_file_up]` with the path to the YAML configuration for the track 03 upsampled (4096).
 
 Replace `[weights_down]` with the path to the weights file for the track 03 downsampled (2048).
 
@@ -165,15 +158,16 @@ Replace `[save_folder_path]` with the folder path which the predict .h5 file wil
 
 ## Citation
 
-If you use our model inference in your research please cite
+If you use our model inference in your research please cite:
 
-      @misc{MICLab-2023-ISBI-MRS-Challenge,
-        author = {Dias, G. and Oliveira, M. and Ueda, L. and Dertkigil, S. and Costa, P. and Rittner, L.},
-        title = {{IEEE-ISBI Edited-MRS Reconstruction Challenge first-place solution}},
-        year = {2023},
-        howpublished = {Code repository for the Deep Spectral Divers team's first-place solution to the Edited-MRS Reconstruction Challenge},
-        url = {https://github.com/MICLab-Unicamp/MICLab-2023-ISBI-MRS-Challenge}
-       }
+      @article{berto2024results,
+        title={Results of the 2023 ISBI challenge to reduce GABA-edited MRS acquisition time},
+        author={Berto, Rodrigo Pommot and Bugler, Hanna and Dias, Gabriel and Oliveira, Mateus and Ueda, Lucas and Dertkigil, Sergio and Costa, Paula DP and Rittner, Leticia and Merkofer, Julian P and van de Sande, Dennis MJ and others},
+        journal={Magnetic Resonance Materials in Physics, Biology and Medicine},
+        pages={1--15},
+        year={2024},
+        publisher={Springer}
+      }
 
 
  
