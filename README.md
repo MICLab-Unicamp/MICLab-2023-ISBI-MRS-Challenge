@@ -6,9 +6,9 @@ Our team was the overall winner of the challenge.
 
 ## Challenge Description
 
-Edited Magnetic Resonance Spectroscopy (MRS) is used to quantify metabolites that are overlapped by those of higher concentration in typical scans. The challenge focused on quantifying Gamma Aminobutyric Acid (GABA), which is overlapped by creatine and glutamate. High-quality data in Edited-MRS scans requires long scan times. The challenge proposed the use of machine learning models to reconstruct spectra using three quarters less data, enabling four times faster Edited-MRS scans.
+Magnetic resonance spectroscopy (MRS) is a non-invasive method to quantify metabolite concentrations in vivo. It's particularly valuable for quantifying gamma-aminobutyric acid (GABA), a key inhibitory neurotransmitter in the brain. The detection of GABA is challenging due to interference from more abundant metabolites. Techniques such as spectral editing, spectral modeling, and two-dimensional MR help isolate the GABA signal. Among these, MEGA-PRESS is a widely used technique for accurate GABA measurement.
 
-Participants in the challenge were provided with simulated and in vivo data training sets representing GABA-edited MEGA-PRESS scans composed of two subspectra (ON and OFF). Scripts for data augmentation, including adding noise, frequency, and phase shifts, were also provided. The models submitted by the teams were evaluated on simulated data (Track 01), homogeneous in vivo data (single-vendor) (Track 02), and heterogeneous in vivo data (multi-vendor) (Track 03) using quantitative metrics such as mean squared error, signal-to-noise ratio, linewidth, and peak shape.
+Participants in the challenge were provided with simulated and in vivo data training sets representing GABA-edited MEGA-PRESS scans composed of two sub-signals (ON and OFF). Scripts for data augmentation, including adding noise, frequency, and phase shifts, were also provided. The models submitted by the teams were evaluated on simulated data (Track 01), homogeneous in vivo data (single-vendor) (Track 02), and heterogeneous in vivo data (multi-vendor) (Track 03) using quantitative metrics such as mean squared error, signal-to-noise ratio, linewidth, and peak shape.
 
 The results of the challenge were presented at the IEEE International Symposium on Biomedical Imaging (ISBI) conference held in Cartagena, Colombia on April 18th, 2023. The challenge outcomes were summarized and submitted for a joint publication.
 
@@ -124,7 +124,7 @@ or
 
 Example usage:
 
-    python3 save_predicts_track02.py weights/weights_track02.pt data/challenge_data/track_02_test_data.h5 data/save_predicts
+    python3 save_predicts_track02.py weights/weights_track02.pt data/track_02_test_data.h5 data/save_predicts
 
 Replace `[weights]` with the path to the weights file for the track.
 
@@ -140,7 +140,7 @@ Execution:
 
 Example usage:
 
-    python3 save_predicts_track03.py weights/weights_track03_2048.pt weights/weights_track03_4096.pt data/challenge_data/track_03_test_data.h5 data/save_predicts
+    python3 save_predicts_track03.py weights/weights_track03_2048.pt weights/weights_track03_4096.pt data/track_03_test_data.h5 data/save_predicts
 
 
 Replace `[weights_down]` with the path to the weights file for the track 03 downsampled (2048).
