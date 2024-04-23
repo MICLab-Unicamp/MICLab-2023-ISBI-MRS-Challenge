@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from tqdm import tqdm
 from utils import ReadDatasets, pad_zeros_spectrogram
-from pre_processing import PreProcessingPipelineBaseline
+from pre_processing import PreProcessing
 from models import SpectroViT
 
 if __name__ == "__main__":
@@ -34,13 +34,14 @@ if __name__ == "__main__":
 
     # Process each input sample
     for i in tqdm(range(input_transients.shape[0])):
-        fid_noise = input_transients[i, :, :, :]
+        signal_input = input_transients[i, :, :, :]
         ppm = input_ppm[i, :]
         t = input_t[i, :]
 
-        # Pre-processing steps
-        fid_noise = fid_noise[np.newaxis, ...]
-        spectrogram = PreProcessingPipelineBaseline.subtract_spectrum_s(fid_noise, t)
+        signal_input = signal_input[np.newaxis, ...]
+        # Pre-processing
+        spectrogram = PreProcessing.spectrogram(signal_input, t)
+
         spectrogram_padd = pad_zeros_spectrogram(spectrogram[0])
         spectrogram = spectrogram_padd[np.newaxis, ...]
 

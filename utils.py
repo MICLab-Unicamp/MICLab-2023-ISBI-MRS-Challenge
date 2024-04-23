@@ -125,7 +125,7 @@ class ReadDatasets:
             hf.create_dataset("ppm_4096", ppm_up.shape, dtype=float, data=ppm_up)
 
 
-def generate_spectrogram(FID, t, window_size=256, hope_size=64, window='hann', nfft=None):
+def stft_norm(FID, t, window_size=256, hope_size=64, window='hann', nfft=None):
     """
     Generate a spectrogram from the given signal using Short-Time Fourier Transform (STFT).
 

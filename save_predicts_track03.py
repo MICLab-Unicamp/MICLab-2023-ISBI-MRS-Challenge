@@ -2,7 +2,7 @@ import argparse
 import os
 import torch
 from utils import ReadDatasets, pad_zeros_spectrogram
-from pre_processing import PreProcessingPipelineBaseline
+from pre_processing import PreProcessing
 from tqdm import tqdm
 import numpy as np
 from models import SpectroViT, SpectroViTTrack3
@@ -61,15 +61,15 @@ if __name__ == "__main__":
         # Loop over the input transients
         for i in tqdm(range(input_transients.shape[0])):
             # Retrieve the current transient, ppm, and t values
-            fid_noise = input_transients[i, :, :, :]
+            signal_input = input_transients[i, :, :, :]
             ppm = input_ppm[i, :]
             t = input_t[i, :]
 
-            # Add a new axis to the fid_noise array
-            fid_noise = fid_noise[np.newaxis, ...]
+            # Add a new axis to the signal_input array
+            signal_input = signal_input[np.newaxis, ...]
 
             # Generate the spectrogram
-            spectrogram = PreProcessingPipelineBaseline.subtract_spectrum_s(fid_noise, t)
+            spectrogram = PreProcessing.spectrogram(signal_input, t)
 
             # Pad zeros to the spectrogram
             spectrogram_padd = pad_zeros_spectrogram(spectrogram[0])

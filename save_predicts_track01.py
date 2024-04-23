@@ -4,7 +4,7 @@ import torch
 import numpy as np
 from tqdm import tqdm
 from utils import pad_zeros_spectrogram, ReadDatasets
-from pre_processing import PreProcessingPipelineBaseline
+from pre_processing import PreProcessing
 from models import SpectroViT
 
 if __name__ == "__main__":
@@ -36,15 +36,15 @@ if __name__ == "__main__":
     ppm_stacked = None
     for i in tqdm(range(input_transients.shape[0])):
         # Get the current spectrogram sample and corresponding tracks
-        fid_noise = input_transients[i, :, :, :]
+        signal_input = input_transients[i, :, :, :]
         ppm = input_ppm[i, :]
         t = input_t[i, :]
 
         # Add a new dimension to the spectrogram sample
-        fid_noise = fid_noise[np.newaxis, ...]
+        signal_input = signal_input[np.newaxis, ...]
 
         # Generate the spectrogram
-        spectrogram = PreProcessingPipelineBaseline.subtract_spectrum_s(fid_noise, t)
+        spectrogram = PreProcessing.spectrogram(signal_input, t)
 
         # Pad zeros to the spectrogram
         spectrogram_padd = pad_zeros_spectrogram(spectrogram[0])
