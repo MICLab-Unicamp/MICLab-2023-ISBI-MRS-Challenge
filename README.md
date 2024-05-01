@@ -12,7 +12,7 @@ Participants in the challenge were provided with simulated and in vivo data trai
 
 The results of the challenge were presented at the IEEE International Symposium on Biomedical Imaging (ISBI) conference held in Cartagena, Colombia on April 18th, 2023. The challenge outcomes were summarized and submitted for a joint publication.
 
-To access our training framework, please visit the GitHub repository for our [Spectro-ViT model](https://github.com/MICLab-Unicamp/Spectro-ViT). For more information about the challenge, visit the [challenge webpage](https://sites.google.com/view/edited-mrs-rec-challenge/home?authuser=0) and check the [journal publication](https://link.springer.com/article/10.1007/s10334-024-01156-9) documenting the challenge results.
+To access our training framework, please visit the GitHub repository for our Spectro-ViT model [![GitHub](https://img.shields.io/badge/MICLab-Spectro_ViT-red)](https://github.com/MICLab-Unicamp/Spectro-ViT). For more information about the challenge, visit the [challenge webpage](https://sites.google.com/view/edited-mrs-rec-challenge/home?authuser=0) and check the [journal publication](https://link.springer.com/article/10.1007/s10334-024-01156-9) documenting the challenge results.
 
 
 ## Table of Contents
