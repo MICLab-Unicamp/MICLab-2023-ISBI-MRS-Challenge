@@ -155,6 +155,11 @@ Replace `[save_folder_path]` with the folder path which the predict .h5 file wil
 
 5. The predicted spectra and ppm values will be saved in an output file named track01.h5, track02.h5, or track03.h5, depending on the respective script. These files will be located in the folder `[save_folder_path]` provided.
 
+## Developers
+
+- [Gabriel Dias](https://github.com/gsantosmdias)
+- [Mateus Oliveira](https://github.com/oliveiraMats2)
+- [Lucas Ueda](https://github.com/lucashueda)
 
 ## Citation
 
