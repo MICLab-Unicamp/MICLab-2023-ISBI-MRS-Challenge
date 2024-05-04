@@ -108,7 +108,7 @@ To execute the model's inference, you must have an h5 file containing the correc
 
 Make sure that the datasets are stored with the exact names and types mentioned above. The functions rely on these specific dataset names to extract the required data.
 
-2. Get the trained weights from each model at this [Link](https://drive.google.com/drive/folders/1NJ1OGs-W9GZE9XMHvctKs67kjNOtY74O?usp=share_link).
+2. Obtain the trained weights by using our [![GitHub](https://img.shields.io/badge/MICLab-Spectro_ViT-red)](https://github.com/MICLab-Unicamp/Spectro-ViT) training framework.
 
 3. Run the script:
 

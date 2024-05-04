@@ -32,9 +32,9 @@ class PreProcessing:
 
             if signal_1.shape[1] == 2048:
                 spectrogram = stft_norm(fid_result, t,
-                                                       window_size=256,
-                                                       hope_size=10,
-                                                       nfft=446)
+                                        window_size=256,
+                                        hope_size=10,
+                                        nfft=446)
             else:
                 spectrogram = stft_norm(fid_result, t)
 
