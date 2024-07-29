@@ -6,13 +6,17 @@ Our team was the overall winner of the challenge.
 
 ## Challenge Description
 
-Magnetic resonance spectroscopy (MRS) is a non-invasive method to quantify metabolite concentrations in vivo. It's particularly valuable for quantifying gamma-aminobutyric acid (GABA), a key inhibitory neurotransmitter in the brain. The detection of GABA is challenging due to interference from more abundant metabolites. Techniques such as spectral editing, spectral modeling, and two-dimensional MR help isolate the GABA signal. Among these, MEGA-PRESS is a widely used technique for accurate GABA measurement.
+Magnetic resonance spectroscopy (MRS) is a non-invasive method to quantify metabolite concentrations in vivo. It's particularly valuable for quantifying gamma-aminobutyric acid (GABA), a key inhibitory neurotransmitter in the brain. The detection of GABA is challenging due to interference from more abundant metabolites. Techniques such as spectral editing, spectral modeling, and two-dimensional MRS help isolate the GABA signal. Among these, MEGA-PRESS is a widely used technique for accurate GABA measurement.
 
 Participants in the challenge were provided with simulated and in vivo data training sets representing GABA-edited MEGA-PRESS scans composed of two sub-signals (ON and OFF). Scripts for data augmentation, including adding noise, frequency, and phase shifts, were also provided. The models submitted by the teams were evaluated on simulated data (Track 01), homogeneous in vivo data (single-vendor) (Track 02), and heterogeneous in vivo data (multi-vendor) (Track 03) using quantitative metrics such as mean squared error, signal-to-noise ratio, linewidth, and peak shape.
 
-The results of the challenge were presented at the IEEE International Symposium on Biomedical Imaging (ISBI) conference held in Cartagena, Colombia on April 18th, 2023. The challenge outcomes were summarized and submitted for a joint publication.
+The results of the challenge were presented at the [IEEE International Symposium on Biomedical Imaging (ISBI) conference held in Cartagena, Colombia on April 18th, 2023](https://biomedicalimaging.org/2023/). The challenge outcomes were summarized and submitted for a joint publication.
 
-To access our training framework, please visit the GitHub repository for our Spectro-ViT model [![GitHub](https://img.shields.io/badge/MICLab-Spectro_ViT-red)](https://github.com/MICLab-Unicamp/Spectro-ViT). For more information about the challenge, visit the [challenge webpage](https://sites.google.com/view/edited-mrs-rec-challenge/home?authuser=0) and check the [journal publication](https://link.springer.com/article/10.1007/s10334-024-01156-9) documenting the challenge results.
+To access our training framework, please visit the GitHub repository for our Spectro-ViT model [![GitHub](https://img.shields.io/badge/MICLab-Spectro_ViT-red)](https://github.com/MICLab-Unicamp/Spectro-ViT). 
+
+Our work on the Spectro-ViT model has been published in the Magnetic Resonance Imaging journal. You can find the full publication at this [DOI link](https://doi.org/10.1016/j.mri.2024.110219).
+
+For more information about the Edited-MRS Reconstruction Challenge, visit the [challenge webpage](https://sites.google.com/view/edited-mrs-rec-challenge/home?authuser=0). Check the [journal publication](https://link.springer.com/article/10.1007/s10334-024-01156-9) documenting the challenge results. 
 
 
 ## Table of Contents
@@ -162,17 +166,24 @@ Replace `[save_folder_path]` with the folder path which the predict .h5 file wil
 - [Lucas Ueda](https://github.com/lucashueda)
 
 ## Citation
+Spectro-ViT model:
 
-If you use our model inference in your research please cite:
+    @article{DIAS2024,
+    title = {Spectro-ViT: A vision transformer model for GABA-edited MEGA-PRESS reconstruction using spectrograms},
+    journal = {Magnetic Resonance Imaging},
+    pages = {110219},
+    year = {2024},
+    doi = {https://doi.org/10.1016/j.mri.2024.110219},
+    author = {Gabriel Dias and Rodrigo Pommot Berto and Mateus Oliveira and Lucas Ueda and Sergio Dertkigil and Paula D.P. Costa and Amirmohammad Shamaei and Hanna Bugler and Roberto Souza and Ashley Harris and Leticia Rittner}
+    }
+    
+Edited-MRS Reconstruction Challenge:
 
-      @article{berto2024results,
-        title={Results of the 2023 ISBI challenge to reduce GABA-edited MRS acquisition time},
-        author={Berto, Rodrigo Pommot and Bugler, Hanna and Dias, Gabriel and Oliveira, Mateus and Ueda, Lucas and Dertkigil, Sergio and Costa, Paula DP and Rittner, Leticia and Merkofer, Julian P and van de Sande, Dennis MJ and others},
-        journal={Magnetic Resonance Materials in Physics, Biology and Medicine},
-        pages={1--15},
-        year={2024},
-        publisher={Springer}
-      }
-
-
- 
+    @article{berto2023,
+      title={Results of the 2023 ISBI challenge to reduce GABA-edited MRS acquisition time},
+      journal={Magnetic Resonance Materials in Physics, Biology and Medicine},
+      pages={1--15},
+      year={2024},
+      doi = {https://doi.org/10.1007/s10334-024-01156-9}
+      author={Berto, Rodrigo Pommot and Bugler, Hanna and Dias, Gabriel and Oliveira, Mateus and Ueda, Lucas and Dertkigil, Sergio and Costa, Paula DP and Rittner, Leticia and Merkofer, Julian P and Van de Sande, Dennis MJ and others},
+    }
