@@ -8,7 +8,7 @@ import os
 import torch
 import numpy as np
 from tqdm import tqdm
-from utils import pad_zeros_spectrogram, ReadDatasets
+from utils import zero_padding, ReadDatasets
 from pre_processing import PreProcessing
 from models import SpectroViT
 
@@ -24,17 +24,19 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Initialize the model
-    model = SpectroViT().to(device)
+    model = SpectroViT()
 
     # Load the weights into the model
     load_dict = torch.load(args.weights)
     model.load_state_dict(load_dict["model_state_dict"])
+    model.to(device)
+    model.eval()
 
     # Get the test data path
     test_data_path = args.test_data_path
 
     # Read spectrogram samples and corresponding tracks from the dataset
-    input_transients, input_ppm, input_t = ReadDatasets.read_h5_sample_track_1(test_data_path)
+    input_transients, input_ppm, input_t, larmorfreq = ReadDatasets.read_h5_sample_track_1(test_data_path)
 
     # Perform inference on each spectrogram sample
     pred_labels_stacked = None
@@ -45,32 +47,42 @@ if __name__ == "__main__":
         ppm = input_ppm[i, :]
         t = input_t[i, :]
 
-        # Add a new dimension to the spectrogram sample
-        signal_input = signal_input[np.newaxis, ...]
+        fs = np.float64(1 / (t[1] - t[0]))
+        fid_off, fid_on = signal_input[:, 0, :], signal_input[:, 1, :]
 
-        # Generate the spectrogram
-        spectrogram = PreProcessing.spectrogram(signal_input, t)
+        spectrogram1 = PreProcessing.spectrogram_channel(fid_off=fid_off[:, 0:14],
+                                                         fid_on=fid_on[:, 0:14],
+                                                         fs=fs,
+                                                         larmorfreq=larmorfreq)
+        spectrogram2 = PreProcessing.spectrogram_channel(fid_off=fid_off[:, 14:27],
+                                                         fid_on=fid_on[:, 14:27],
+                                                         fs=fs,
+                                                         larmorfreq=larmorfreq)
+        spectrogram3 = PreProcessing.spectrogram_channel(fid_off=fid_off[:, 27:40],
+                                                         fid_on=fid_on[:, 27:40],
+                                                         fs=fs,
+                                                         larmorfreq=larmorfreq)
 
-        # Pad zeros to the spectrogram
-        spectrogram_padd = pad_zeros_spectrogram(spectrogram[0])
-        spectrogram = spectrogram_padd[np.newaxis, ...]
+        spectrogram1 = zero_padding(spectrogram1)
+        spectrogram1 = spectrogram1[np.newaxis, ...]
+        spectrogram1 = torch.from_numpy(spectrogram1.real)
 
-        # Convert spectrogram and ppm to PyTorch tensors
-        spectrogram = torch.from_numpy(spectrogram)
+        spectrogram2 = zero_padding(spectrogram2)
+        spectrogram2 = spectrogram2[np.newaxis, ...]
+        spectrogram2 = torch.from_numpy(spectrogram2.real)
+
+        spectrogram3 = zero_padding(spectrogram3)
+        spectrogram3 = spectrogram3[np.newaxis, ...]
+        spectrogram3 = torch.from_numpy(spectrogram3.real)
+
         ppm = torch.from_numpy(ppm)
 
-        # Concatenate the spectrogram along the channel dimension
-        three_channels_spectrogram = torch.cat([spectrogram, spectrogram, spectrogram])
+        three_channels_spectrogram = torch.concat([spectrogram1, spectrogram2, spectrogram3])
+        three_channels_spectrogram = three_channels_spectrogram[np.newaxis, ...]
 
-        # Convert the input to the appropriate type and move it to the device
-        inputs = three_channels_spectrogram.real.type(torch.FloatTensor)
-        inputs = inputs.to(device)
-
-        # Add an extra dimension to the input tensor
-        inputs = torch.unsqueeze(inputs, dim=0)
-
+        three_channels_spectrogram = three_channels_spectrogram.type(torch.FloatTensor).to(device)
         # Perform forward pass to get the predicted labels
-        pred_labels = model(inputs)
+        pred_labels = model(three_channels_spectrogram)
 
         # Convert the predicted labels and ppm to NumPy arrays
         pred_labels = pred_labels.detach().cpu().numpy()

@@ -4,38 +4,26 @@ Maintainer: Gabriel Dias (g172441@dac.unicamp.br)
 """
 
 import numpy as np
-from utils import stft_norm
+from utils import normalized_stft
 
 
 class PreProcessing:
     @staticmethod
-    def spectrogram(signal_1: np.ndarray, t: np.ndarray) -> np.ndarray:
-        """
-        Computation to generate the spectrogram.
+    def spectrogram_channel(fid_off: np.ndarray, fid_on: np.ndarray, fs: np.float64,
+                            larmorfreq: np.float64) -> np.ndarray:
 
-        Args:
-            signal_1 (np.ndarray): Input signal array.
-            t (np.ndarray): Time array.
+        fid_diff = fid_on - fid_off
+        fid_result = np.mean(fid_diff, axis=1)
 
-        Returns:
-            np.ndarray: Result spectrogram .
-        """
-        if len(signal_1.shape) == 3:
-            signal_1 = np.fft.fftshift(np.fft.ifft(signal_1, axis=1), axes=1)
-            return signal_1[:, :, 1] - signal_1[:, :, 0]
+        if fid_result.shape[0] == 2048:
+            hop_size = 10
+        elif fid_result.shape[0] == 4096:
+            hop_size = 64
 
-        if len(signal_1.shape) == 4:
-            fid_on = signal_1.mean(axis=3)[:, :, 1]
-            fid_off = signal_1.mean(axis=3)[:, :, 0]
+        spectrogram = normalized_stft(fid=fid_result,
+                                      fs=fs,
+                                      larmorfreq=larmorfreq,
+                                      window_size=256,
+                                      hop_size=hop_size)
 
-            fid_result = fid_on - fid_off
-
-            if signal_1.shape[1] == 2048:
-                spectrogram = stft_norm(fid_result, t,
-                                        window_size=256,
-                                        hope_size=10,
-                                        nfft=446)
-            else:
-                spectrogram = stft_norm(fid_result, t)
-
-            return spectrogram
+        return spectrogram

@@ -8,7 +8,7 @@ import os
 import numpy as np
 import torch
 from tqdm import tqdm
-from utils import ReadDatasets, pad_zeros_spectrogram
+from utils import ReadDatasets, zero_padding
 from pre_processing import PreProcessing
 from models import SpectroViT
 
@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     # Load test data
     test_data_path = args.test_data_path
-    input_transients, input_ppm, input_t = ReadDatasets.read_h5_sample_track_2(test_data_path)
+    input_transients, input_ppm, input_t, larmorfreq = ReadDatasets.read_h5_sample_track_2(test_data_path)
 
     pred_labels_stacked = None
     ppm_stacked = None
@@ -43,26 +43,45 @@ if __name__ == "__main__":
         ppm = input_ppm[i, :]
         t = input_t[i, :]
 
-        signal_input = signal_input[np.newaxis, ...]
-        # Pre-processing
-        spectrogram = PreProcessing.spectrogram(signal_input, t)
+        fs = np.float64(1 / (t[1] - t[0]))
+        fid_off, fid_on = signal_input[:, 0, :], signal_input[:, 1, :]
 
-        spectrogram_padd = pad_zeros_spectrogram(spectrogram[0])
-        spectrogram = spectrogram_padd[np.newaxis, ...]
+        spectrogram1 = PreProcessing.spectrogram_channel(fid_off=fid_off[:, 0:14],
+                                                         fid_on=fid_on[:, 0:14],
+                                                         fs=fs,
+                                                         larmorfreq=larmorfreq)
+        spectrogram2 = PreProcessing.spectrogram_channel(fid_off=fid_off[:, 14:27],
+                                                         fid_on=fid_on[:, 14:27],
+                                                         fs=fs,
+                                                         larmorfreq=larmorfreq)
+        spectrogram3 = PreProcessing.spectrogram_channel(fid_off=fid_off[:, 27:40],
+                                                         fid_on=fid_on[:, 27:40],
+                                                         fs=fs,
+                                                         larmorfreq=larmorfreq)
 
-        # Convert numpy arrays to torch tensors
-        spectrogram = torch.from_numpy(spectrogram)
+        spectrogram1 = zero_padding(spectrogram1)
+        spectrogram1 = spectrogram1[np.newaxis, ...]
+        spectrogram1 = torch.from_numpy(spectrogram1.real)
+
+        spectrogram2 = zero_padding(spectrogram2)
+        spectrogram2 = spectrogram2[np.newaxis, ...]
+        spectrogram2 = torch.from_numpy(spectrogram2.real)
+
+        spectrogram3 = zero_padding(spectrogram3)
+        spectrogram3 = spectrogram3[np.newaxis, ...]
+        spectrogram3 = torch.from_numpy(spectrogram3.real)
+
         ppm = torch.from_numpy(ppm)
 
-        # Create three-channel spectrogram
-        three_channels_spectrogram = torch.cat([spectrogram, spectrogram, spectrogram])
+        three_channels_spectrogram = torch.concat([spectrogram1, spectrogram2, spectrogram3])
+        three_channels_spectrogram = three_channels_spectrogram[np.newaxis, ...]
 
-        # Prepare input data for the model
-        inputs = three_channels_spectrogram.real.type(torch.FloatTensor).to(device)
-        inputs = torch.unsqueeze(inputs, dim=0)
+        three_channels_spectrogram = three_channels_spectrogram.type(torch.FloatTensor).to(device)
+        # Perform forward pass to get the predicted labels
+        pred_labels = model(three_channels_spectrogram)
 
         # Forward pass through the model
-        pred_labels = model(inputs).detach().cpu().numpy()
+        pred_labels = pred_labels.detach().cpu().numpy()
         ppm = ppm.detach().cpu().numpy()
 
         # Normalize predicted labels

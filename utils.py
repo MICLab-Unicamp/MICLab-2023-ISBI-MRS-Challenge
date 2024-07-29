@@ -7,10 +7,13 @@ import numpy as np
 import h5py
 from scipy import signal
 
+#provided by the organizers
+REF_LARMOR_FREQ = np.float64(127.758139)
+
 
 class ReadDatasets:
     @staticmethod
-    def read_h5_sample_track_1(filename: str) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def read_h5_sample_track_1(filename: str) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.float64]:
         """
         Read sample data from an H5 file for track 1.
 
@@ -25,10 +28,10 @@ class ReadDatasets:
             t = hf["t"][()]
             transients = hf["transients"][()]
 
-        return transients, ppm, t
+        return transients, ppm, t, REF_LARMOR_FREQ
 
     @staticmethod
-    def read_h5_sample_track_2(filename: str) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def read_h5_sample_track_2(filename: str) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.float64]:
         """
         Read sample data from an H5 file for track 2.
 
@@ -43,10 +46,10 @@ class ReadDatasets:
             t = hf["t"][()]
             transients = hf['transient_fids'][()]
 
-        return transients, ppm, t
+        return transients, ppm, t, REF_LARMOR_FREQ
 
     def read_h5_sample_track_3(filename: str) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray,
-    np.ndarray, np.ndarray]:
+    np.ndarray, np.ndarray, np.float64]:
         """
         Read sample data from an H5 file for track 3.
 
@@ -66,7 +69,7 @@ class ReadDatasets:
             input_transients_up = hf['data_4096']["transient_fids"][()]
 
         return input_transients_down, input_ppm_down, input_t_down, \
-            input_transients_up, input_ppm_up, input_t_up
+            input_transients_up, input_ppm_up, input_t_up, REF_LARMOR_FREQ
 
     @staticmethod
     def write_h5_track1_predict_submission(filename: str,
@@ -130,54 +133,30 @@ class ReadDatasets:
             hf.create_dataset("ppm_4096", ppm_up.shape, dtype=float, data=ppm_up)
 
 
-def stft_norm(FID, t, window_size=256, hope_size=64, window='hann', nfft=None):
-    """
-    Generate a spectrogram from the given signal using Short-Time Fourier Transform (STFT).
+def normalized_stft(fid, fs, larmorfreq, window_size, hop_size, window='hann', nfft=None):
+    noverlap = window_size - hop_size
 
-    Args:
-        FID (array-like): Input signal.
-        t (array-like): Time array corresponding to the FID signal.
-        window_size (int): Size of the analysis window (default: 256).
-        hope_size (int): Size of the hop between windows (default: 64).
-        window (str or tuple or array_like): Desired window to use (default: 'hann').
-        nfft (int): Length of the FFT used, if a zero padded FFT is desired (default: None).
-
-    Returns:
-        Zxx (ndarray): 2D array containing the complex-valued spectrogram.
-    """
-
-    # calculating the overlap between the windows
-    noverlap = window_size - hope_size
-
-    # checking for the NOLA criterion
     if not signal.check_NOLA(window, window_size, noverlap):
-        raise ValueError("Signal windowing fails Non-zero Overlap Add (NOLA) criterion; STFT not invertible")
+        raise ValueError("signal windowing fails Non-zero Overlap Add (NOLA) criterion; "
+                         "STFT not invertible")
 
-    fs = 1 / (t[1] - t[0])
+    f, t, stft_coefficients = signal.stft(fid, fs=fs, nperseg=window_size, noverlap=noverlap,
+                                          nfft=nfft, return_onesided=False)
 
-    # computing the STFT
-    _, _, Zxx = signal.stft(np.real(FID), fs=fs, nperseg=window_size, noverlap=noverlap,
-                            return_onesided=True, nfft=nfft)
+    f = np.concatenate([np.split(f, 2)[1],
+                        np.split(f, 2)[0]])
+    ppm = 4.65 + f / larmorfreq
 
-    Zxx = Zxx / np.max(np.abs(Zxx))
+    stft_coefficients_ordered = np.concatenate([np.split(stft_coefficients, 2)[1],
+                                                np.split(stft_coefficients, 2)[0]])
+    stft_coefficients_ordered = np.flip(stft_coefficients_ordered, axis=0)
+    stft_coefficients_onesided = stft_coefficients_ordered[(ppm >= 0), :]
+    stft_coefficients_onesided_norm = stft_coefficients_onesided / (np.max(np.abs(stft_coefficients_onesided)))
 
-    return Zxx
+    return stft_coefficients_onesided_norm
 
 
-def pad_zeros_spectrogram(Zxx, output_shape=(224, 224)):
-    # This function pads zeros to a spectrogram matrix to match a specified output shape.
-
-    # Copy the input matrix to a new variable
-    matrix = Zxx
-
-    # Calculate the pad width for each dimension of the matrix
-    pad_width = (
-        (0, output_shape[0] - matrix.shape[0]),  # Pad rows with zeros
-        (0, output_shape[1] - matrix.shape[1])  # Pad columns with zeros
-    )
-
-    # Pad the matrix with zeros using the calculated pad width
+def zero_padding(matrix, output_shape=(224, 224)):
+    pad_width = ((0, output_shape[0] - matrix.shape[0]), (0, output_shape[1] - matrix.shape[1]))
     padded_matrix = np.pad(matrix, pad_width, mode="constant")
-
-    # Return the padded matrix
     return padded_matrix
